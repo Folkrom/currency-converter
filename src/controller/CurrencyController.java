@@ -18,19 +18,23 @@ public class CurrencyController {
         String toCurrency = view.getToCurrency();
         double fromAmount = view.getFromAmount();
         double toAmount = view.getToAmount();
+        String currencyPair = new StringBuilder(fromCurrency).append("-").append(toCurrency).toString();
 
-        if (fromAmount != 0.0) {
-            // Convertir la moneda de origen a la moneda de destino
-            double convertedAmount = model.convert(fromCurrency, toCurrency, fromAmount);
-            
-            // Actualizar el campo de cantidad de destino en la vista
-            view.setToAmount(convertedAmount);
-        } else if (toAmount != 0.0) {
-            // Convertir la moneda de destino a la moneda de origen
-            double convertedAmount = model.convert(toCurrency, fromCurrency, toAmount);
-            
-            // Actualizar el campo de cantidad de origen en la vista
-            view.setFromAmount(convertedAmount);
+        double convertedAmount = 0.0;
+        if (fromAmount != 0.0 || toAmount != 0.0) {
+            if (fromCurrency.equalsIgnoreCase(toCurrency)) {
+                convertedAmount = (fromAmount != 0.0) ? fromAmount : toAmount;
+            } else {
+                convertedAmount = model.convert(currencyPair, (fromAmount != 0.0) ? fromAmount : toAmount);
+            }
+
+            if (fromAmount != 0.0) {
+                // Actualizar el campo de cantidad de destino en la vista
+                view.setToAmount(convertedAmount);
+            } else {
+                // Actualizar el campo de cantidad de origen en la vista
+                view.setFromAmount(convertedAmount);
+            }
         }
     }
 }
